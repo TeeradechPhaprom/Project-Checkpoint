@@ -5,29 +5,45 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="CSS/style.css">
-    <title>Document</title>
+    <link rel="stylesheet" href="./CSS/style.css">
+    <title>Portfolio</title>
 </head>
 
 <body>
-    <main>portfolio</main>
-    <div class="container">
-        <div class="row">
-            <div class="col-md-6 mb-3">
-                <div class="card">
+    <header class="app-header">
+        <div class="container text-center">
+            <h1 class="h2 mb-1">Portfolio</h1>
+            <p class="mb-0 opacity-75 small">Build profile and project achievements</p>
+        </div>
+    </header>
+
+    <main class="container mb-5">
+        <!--Profile Overview & Edit -->
+        <div class="row g-4 mb-4">
+            <div class="col-md-6">
+                <div class="card h-100">
                     <div class="card-body">
-                        <span class="badge text-bg-light align-self-start mb-3">Portfolio 1</span>
-                        <h2 class="h4 fw-bold" id="portfolio-name">Your name</h2>
-                        <p><strong>What I enjoy:</strong> <span id="portfolio-enjoy">none</span></p>
-                        <p><strong>What I've tried:</strong> <span id="portfolio-tried">none</span></p>
-                        <p><strong>What I'm curious about:</strong> <span id="portfolio-curious">none</span>
-                        </p>
+                        <span class="badge-custom d-inline-block mb-3">Portfolio Overview</span>
+                        <h2 class="h4 fw-bold mb-3" id="portfolio-name">Your name</h2>
+                        <div class="preview-item">
+                            <strong>What I enjoy:</strong>
+                            <span id="portfolio-enjoy">none</span>
+                        </div>
+                        <div class="preview-item">
+                            <strong>What I've tried:</strong>
+                            <span id="portfolio-tried">none</span>
+                        </div>
+                        <div class="preview-item">
+                            <strong>What I'm curious about:</strong>
+                            <span id="portfolio-curious">none</span>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="col-md-6 mb-3">
-                <div class="card">
+            <div class="col-md-6">
+                <div class="card h-100">
                     <div class="card-body">
+                        <h3 class="h5 fw-bold mb-3">Edit Profile</h3>
                         <form id="profile-form">
                             <label class="form-label" for="displayName">Display name</label>
                             <input class="form-control mb-3" name="displayName" id="displayName" required maxlength="80"
@@ -45,90 +61,122 @@
                             <p class="form-error small mb-2" id="profile-error" role="alert"></p>
                             <div class="d-flex gap-2">
                                 <button class="btn btn-success flex-grow-1" type="submit">Create portfolio</button>
-                                <button class="btn btn-outline-light" type="reset">Clear</button>
+                                <button class="btn btn-outline-secondary" type="reset">Clear</button>
                             </div>
                         </form>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-    <div class="container">
-        <div class="row">
-            <div class="col-md-3 mb-3">
-                <div class="card">
+
+        <!--Portfolio Items HERE (Item 1,2)(กล่อง2อัน ขวาล่าง)-->
+        <div class="row g-4">
+            <div class="col-lg-3 col-md-6">
+                <div class="card h-100">
                     <div class="card-body">
-                        <span class="badge text-bg-light align-self-start mb-3">Portfolio item 1</span>
-                        <p><strong>Title, Type, Date:</strong> <span id="portfolio-Title">none</span></p>
-                        <p><strong>Role, Description:</strong> <span id="portfolio-Role">none</span></p>
-                        <p><strong>Skills:</strong> <span id="portfolio-Skills">none</span></p>
-                        <p><strong>Reflection:</strong> <span id="portfolio-Reflection">none</span></p>
-                        <p><strong>Evidence:</strong> <span id="portfolio-Evidence">none</span></p>
+                        <span class="badge-custom d-inline-block mb-3">Portfolio Item 1</span>
+                        <div class="preview-item">
+                            <strong>Title, Type, Date:</strong>
+                            <span id="portfolio-Title">none</span>
+                        </div>
+                        <div class="preview-item">
+                            <strong>Role, Description:</strong>
+                            <span id="portfolio-Role">none</span>
+                        </div>
+                        <div class="preview-item">
+                            <strong>Skills:</strong>
+                            <span id="portfolio-Skills">none</span>
+                        </div>
+                        <div class="preview-item">
+                            <strong>Reflection:</strong>
+                            <span id="portfolio-Reflection">none</span>
+                        </div>
+                        <div class="preview-item">
+                            <strong>Evidence:</strong>
+                            <span id="portfolio-Evidence">none</span>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="col-md-3 mb-3">
-                <div class="card">
+            <div class="col-lg-3 col-md-6">
+                <div class="card h-100">
                     <div class="card-body">
-                        <span class="badge text-bg-light align-self-start mb-3">Portfolio item 2</span>
-                        <p><strong>Title, Type, Date:</strong> <span id="portfolio-Title2">none</span></p>
-                        <p><strong>Role, Description:</strong> <span id="portfolio-Role2">none</span></p>
-                        <p><strong>Skills:</strong> <span id="portfolio-Skills2">none</span></p>
-                        <p><strong>Reflection:</strong> <span id="portfolio-Reflection2">none</span></p>
-                        <p><strong>Evidence:</strong> <span id="portfolio-Evidence2">none</span></p>
+                        <span class="badge-custom d-inline-block mb-3">Portfolio Item 2</span>
+                        <div class="preview-item">
+                            <strong>Title, Type, Date:</strong>
+                            <span id="portfolio-Title2">none</span>
+                        </div>
+                        <div class="preview-item">
+                            <strong>Role, Description:</strong>
+                            <span id="portfolio-Role2">none</span>
+                        </div>
+                        <div class="preview-item">
+                            <strong>Skills:</strong>
+                            <span id="portfolio-Skills2">none</span>
+                        </div>
+                        <div class="preview-item">
+                            <strong>Reflection:</strong>
+                            <span id="portfolio-Reflection2">none</span>
+                        </div>
+                        <div class="preview-item">
+                            <strong>Evidence:</strong>
+                            <span id="portfolio-Evidence2">none</span>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="col-md-6 mb-3">
-                <div class="card">
+            <div class="col-lg-6 col-md-12">
+                <div class="card h-100">
                     <div class="card-body">
+                        <h3 class="h5 fw-bold mb-3">Edit Portfolio Items</h3>
                         <form id="profile-form-item">
-                            <p><b>Item 1</p>
+                            <div class="form-section-title">Item 1</div>
 
                             <label class="form-label" for="Title">Title, Type, Date</label>
-                            <input class="form-control mb-3" id="Title" placeholder="e.g. Jamie Student">
+                            <input class="form-control mb-3" id="Title" placeholder="e.g. My First Website, Course Assignment, 2026-10-18">
 
                             <label class="form-label" for="Role">Role, Description</label>
-                            <input class="form-control mb-3" id="Role" placeholder="e.g. Designing websites">
+                            <input class="form-control mb-3" id="Role" placeholder="e.g. Developer, Created a personal website">
 
                             <label class="form-label" for="Skill">Skills</label>
-                            <input class="form-control mb-3" id="Skill" placeholder="e.g. My first group project">
+                            <input class="form-control mb-3" id="Skill" placeholder="e.g. HTML, CSS">
 
                             <label class="form-label" for="Reflection">Reflection</label>
-                            <input class="form-control mb-3" id="Reflection" placeholder="e.g. Cloud computing">
+                            <input class="form-control mb-3" id="Reflection" placeholder="e.g. Built the website, learned responsive design">
 
                             <label class="form-label" for="Evidence">Evidence</label>
-                            <input class="form-control mb-3" id="Evidence" placeholder="e.g. Cloud computing">
+                            <input class="form-control mb-4" id="Evidence" placeholder="e.g. https://example.com/my-work">
 
-                            <p>Item 2</p>
+                            <div class="form-section-title">Item 2</div>
 
                             <label class="form-label" for="Title2">Title, Type, Date</label>
-                            <input class="form-control mb-3" id="Title2" placeholder="e.g. Jamie Student">
+                            <input class="form-control mb-3" id="Title2" placeholder="e.g. Form Validation Practice, Personal Project, 2026-10-25">
 
                             <label class="form-label" for="Role2">Role, Description</label>
-                            <input class="form-control mb-3" id="Role2" placeholder="e.g. Designing websites">
+                            <input class="form-control mb-3" id="Role2" placeholder="e.g. Developer, Practiced validating form input">
 
                             <label class="form-label" for="Skill2">Skills</label>
-                            <input class="form-control mb-3" id="Skill2" placeholder="e.g. My first group project">
+                            <input class="form-control mb-3" id="Skill2" placeholder="e.g. JavaScript, Bootstrap">
 
                             <label class="form-label" for="Reflection2">Reflection</label>
-                            <input class="form-control mb-3" id="Reflection2" placeholder="e.g. Cloud computing">
+                            <input class="form-control mb-3" id="Reflection2" placeholder="e.g. Wrote validation for text and URL fields">
 
                             <label class="form-label" for="Evidence2">Evidence</label>
-                            <input class="form-control mb-3" id="Evidence2" placeholder="e.g. Cloud computing">
+                            <input class="form-control mb-3" id="Evidence2" placeholder="e.g. https://example.com/form-practice">
 
                             <p class="form-error small mb-2" id="ss" role="alert"></p>
                             <div class="d-flex gap-2">
                                 <button class="btn btn-success flex-grow-1" type="submit">Create portfolio</button>
-                                <button class="btn btn-outline-light" type="reset">Clear</button>
+                                <button class="btn btn-outline-secondary" type="reset">Clear</button>
                             </div>
                         </form>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-    <script src="js/app.js"></script>
+    </main>
+
+    <script src="./js/app.js"></script>
 </body>
 
 </html>

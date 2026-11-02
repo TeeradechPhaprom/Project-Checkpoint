@@ -1,15 +1,121 @@
-body {
-    background-color: dimgray;
+:root {
+    --bg-page: #cacbcc;
+    --text-primary: #0f172a;
+    --card-border: #e2e8f0;
+    --brand-primary: #0f766e;
+    --brand-light: #f0fdfa;
+    --brand-border: #ccfbf1;
 }
 
-main {
-    font-size: 50px;
-    border: solid 1px;
-    padding: 10px;
-    margin: 10px;
-    border-radius: 10px;
-    text-align: center;
-    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
-    background-color: seagreen;
-    color: white;
+body {
+    background-color: var(--bg-page);
+    color: var(--text-primary);
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    min-height: 100;
+    margin: 0;
+}
+
+/* Banner */
+.app-header {
+    background: linear-gradient(135deg, #dbd810 0%, #134e4a 100%);
+    color: #000000;
+    padding: 2rem 1rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+}   
+
+/* Cards */
+.card:hover {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+}
+
+/* Custom Badge (กรอปหัวข้อ)*/
+.badge-custom {
+    background-color: var(--brand-light);
+    color: var(--brand-primary);
+    border: 1px solid var(--brand-border);
+    font-weight: 600;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 0.35rem 0.65rem;
+    border-radius: 9999px;
+}
+
+/* Form Controls */
+.form-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 0.3rem;
+}
+
+.form-control:focus {
+    border-color: var(--brand-primary);
+    box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.15);
+}
+
+/* Buttons */
+.btn-brand,
+.btn-success {
+    background-color: var(--brand-primary) !important;
+    border-color: var(--brand-primary) !important;
+    color: #ffffff !important;
+    font-weight: 600;
+    border-radius: 0.5rem;
+    padding: 0.55rem 1rem;
+    transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.btn-brand:hover,
+.btn-brand:focus,
+.btn-success:hover,
+.btn-success:focus {
+    background-color: var(--brand-primary-hover) !important;
+    border-color: var(--brand-primary-hover) !important;
+}
+
+.btn-outline-secondary {
+    border-color: #cbd5e1;
+    color: var(--text-secondary);
+    border-radius: 0.5rem;
+    padding: 0.55rem 1rem;
+    font-weight: 500;
+}
+
+.btn-outline-secondary:hover {
+    background-color: #f1f5f9;
+    border-color: #94a3b8;
+    color: var(--text-primary);
+}
+
+/* Item 1,2 (Edit)*/
+.form-section-title {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--brand-primary);
+    padding-bottom: 0.35rem;
+    margin-bottom: 0.85rem;
+    border-bottom: 2px solid var(--brand-border);
+}
+
+/* Error message */
+.form-error {
+    color: #dc2626;
+    font-size: 0.875rem;
+}
+
+/* Preview item */
+.preview-item {
+    margin-bottom: 0.85rem;
+    line-height: 1.45;
+}
+
+.preview-item strong {
+    color: var(--text-secondary);
+    font-size: 0.825rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    display: block;
+    margin-bottom: 0.15rem;
 }
