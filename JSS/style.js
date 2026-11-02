@@ -1,5 +1,3 @@
-// Challenge 4: Make It Remember
-// Challenges 1-3 already work. Your mission: save and restore the Portfolio.
 const form = document.querySelector('#profile-form');
 const STORAGE_KEY = 'powerup-portfolio';
 
@@ -31,6 +29,45 @@ const json = JSON.stringify(portfolio);
     localStorage.setItem(STORAGE_KEY, json);
 });
 
+const form2 = document.querySelector('#profile-form-item');
+
+form2.addEventListener("submit", function(event) {
+event.preventDefault();
+const title1 = document.querySelector("#Title").value;
+const role1 = document.querySelector("#Role").value;
+const skill1 = document.querySelector("#Skill").value;
+const reflection1 = document.querySelector("#Reflection").value;
+const evidence1 = document.querySelector("#Evidence").value;
+const title2 = document.querySelector("#Title2").value;
+const role2 = document.querySelector("#Role2").value;
+const skill2 = document.querySelector("#Skill2").value;
+const reflection2 = document.querySelector("#Reflection2").value;
+const evidence2 = document.querySelector("#Evidence2").value;
+console.log(title1);
+console.log(role1);
+console.log(skill1);
+console.log(reflection1);
+console.log(evidence1);
+console.log(title2);
+console.log(role2);
+console.log(skill2);
+console.log(reflection2);
+console.log(evidence2);
+document.querySelector("#portfolio-Title").textContent = title1;
+document.querySelector("#portfolio-Role").textContent = role1;
+document.querySelector("#portfolio-Skills").textContent = skill1;
+document.querySelector("#portfolio-Reflection").textContent = reflection1;
+document.querySelector("#portfolio-Evidence").textContent = evidence1;
+document.querySelector("#portfolio-Title2").textContent = title1;
+document.querySelector("#portfolio-Role2").textContent = role1;
+document.querySelector("#portfolio-Skills2").textContent = skill1;
+document.querySelector("#portfolio-Reflection2").textContent = reflection1;
+document.querySelector("#portfolio-Evidence2").textContent = evidence1;
+
+
+}
+)
+
 const savedData = localStorage.getItem(STORAGE_KEY);
 if (savedData !== null) {
     try {
@@ -40,4 +77,3 @@ if (savedData !== null) {
         console.error('Could not restore the saved Portfolio:', error);
     }
 }
-

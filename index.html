@@ -55,19 +55,77 @@
     </div>
     <div class="container">
         <div class="row">
-            <div class="col-md-6">
+            <div class="col-md-3 mb-3">
                 <div class="card">
                     <div class="card-body">
                         <span class="badge text-bg-light align-self-start mb-3">Portfolio item 1</span>
-                        <p><strong>Title, Type, Date:</strong> <span id="portfolio-enjoy">none</span></p>
-                        <p><strong>Role, Description:</strong> <span id="portfolio-tried">none</span></p>
-                        <p><strong>Skills:</strong> <span id="portfolio-curious">none</span></p>
-                        <p><strong>Reflection:</strong> <span id="portfolio-curious">none</span></p>
-                        <p><strong>Evidence:</strong> <span id="portfolio-curious">none</span></p>
+                        <p><strong>Title, Type, Date:</strong> <span id="portfolio-Title">none</span></p>
+                        <p><strong>Role, Description:</strong> <span id="portfolio-Role">none</span></p>
+                        <p><strong>Skills:</strong> <span id="portfolio-Skills">none</span></p>
+                        <p><strong>Reflection:</strong> <span id="portfolio-Reflection">none</span></p>
+                        <p><strong>Evidence:</strong> <span id="portfolio-Evidence">none</span></p>
                     </div>
                 </div>
             </div>
+            <div class="col-md-3 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <span class="badge text-bg-light align-self-start mb-3">Portfolio item 2</span>
+                        <p><strong>Title, Type, Date:</strong> <span id="portfolio-Title2">none</span></p>
+                        <p><strong>Role, Description:</strong> <span id="portfolio-Role2">none</span></p>
+                        <p><strong>Skills:</strong> <span id="portfolio-Skills2">none</span></p>
+                        <p><strong>Reflection:</strong> <span id="portfolio-Reflection2">none</span></p>
+                        <p><strong>Evidence:</strong> <span id="portfolio-Evidence2">none</span></p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <form id="profile-form-item">
+                            <p><b>Item 1</p>
 
+                            <label class="form-label" for="Title">Title, Type, Date</label>
+                            <input class="form-control mb-3" id="Title" placeholder="e.g. Jamie Student">
+
+                            <label class="form-label" for="Role">Role, Description</label>
+                            <input class="form-control mb-3" id="Role" placeholder="e.g. Designing websites">
+
+                            <label class="form-label" for="Skill">Skills</label>
+                            <input class="form-control mb-3" id="Skill" placeholder="e.g. My first group project">
+
+                            <label class="form-label" for="Reflection">Reflection</label>
+                            <input class="form-control mb-3" id="Reflection" placeholder="e.g. Cloud computing">
+
+                            <label class="form-label" for="Evidence">Evidence</label>
+                            <input class="form-control mb-3" id="Evidence" placeholder="e.g. Cloud computing">
+
+                            <p>Item 2</p>
+
+                            <label class="form-label" for="Title2">Title, Type, Date</label>
+                            <input class="form-control mb-3" id="Title2" placeholder="e.g. Jamie Student">
+
+                            <label class="form-label" for="Role2">Role, Description</label>
+                            <input class="form-control mb-3" id="Role2" placeholder="e.g. Designing websites">
+
+                            <label class="form-label" for="Skill2">Skills</label>
+                            <input class="form-control mb-3" id="Skill2" placeholder="e.g. My first group project">
+
+                            <label class="form-label" for="Reflection2">Reflection</label>
+                            <input class="form-control mb-3" id="Reflection2" placeholder="e.g. Cloud computing">
+
+                            <label class="form-label" for="Evidence2">Evidence</label>
+                            <input class="form-control mb-3" id="Evidence2" placeholder="e.g. Cloud computing">
+
+                            <p class="form-error small mb-2" id="ss" role="alert"></p>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-success flex-grow-1" type="submit">Create portfolio</button>
+                                <button class="btn btn-outline-light" type="reset">Clear</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
     <script src="JSS/style.js"></script>
