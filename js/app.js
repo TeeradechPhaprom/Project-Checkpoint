@@ -64,14 +64,40 @@ form2.addEventListener("submit", function (event) {
     document.querySelector("#portfolio-Skills2").textContent = skill2;
     document.querySelector("#portfolio-Reflection2").textContent = reflection2;
     document.querySelector("#portfolio-Evidence2").textContent = evidence2;
-}
-)
+
+
+    const savedData = localStorage.getItem(STORAGE_KEY);
+    let portfolioData = savedData ? JSON.parse(savedData) : {};
+
+    portfolioData.items = [
+        { title: title1, role: role1, skill: skill1, reflection: reflection1, evidence: evidence1 },
+        { title: title2, role: role2, skill: skill2, reflection: reflection2, evidence: evidence2 }
+    ];
+
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(portfolioData));
+});
+
 
 const savedData = localStorage.getItem(STORAGE_KEY);
 if (savedData !== null) {
     try {
         const savedPortfolio = JSON.parse(savedData);
         showPortfolio(savedPortfolio);
+
+        if (savedPortfolio.items && savedPortfolio.items.length > 0) {
+            const items = savedPortfolio.items;
+            document.querySelector("#portfolio-Title").textContent = items[0].title || '';
+            document.querySelector("#portfolio-Role").textContent = items[0].role || '';
+            document.querySelector("#portfolio-Skills").textContent = items[0].skill || '';
+            document.querySelector("#portfolio-Reflection").textContent = items[0].reflection || '';
+            document.querySelector("#portfolio-Evidence").textContent = items[0].evidence || '';
+
+            document.querySelector("#portfolio-Title2").textContent = items[1].title || '';
+            document.querySelector("#portfolio-Role2").textContent = items[1].role || '';
+            document.querySelector("#portfolio-Skills2").textContent = items[1].skill || '';
+            document.querySelector("#portfolio-Reflection2").textContent = items[1].reflection || '';
+            document.querySelector("#portfolio-Evidence2").textContent = items[1].evidence || '';
+        }
     } catch (error) {
         console.error('Could not restore the saved Portfolio:', error);
     }
