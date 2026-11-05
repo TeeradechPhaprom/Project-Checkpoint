@@ -1,8 +1,11 @@
 :root {
-    --bg-page: #cacbcc;
+    --bg-page: #dfe3e8;
     --text-primary: #0f172a;
+    --text-secondary: #475569;
+    --card-bg: #ffffff;
     --card-border: #e2e8f0;
     --brand-primary: #0f766e;
+    --brand-primary-hover: #115e59;
     --brand-light: #f0fdfa;
     --brand-border: #ccfbf1;
 }
@@ -11,22 +14,87 @@ body {
     background-color: var(--bg-page);
     color: var(--text-primary);
     font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    min-height: 100;
+    min-height: 100vh;
     margin: 0;
+    /* Decoration: faint dot-grid */
+    background-image: radial-gradient(rgba(15, 118, 110, 0.12) 1px, transparent 1px);
+    background-size: 22px 22px;
 }
 
 /* Banner */
 .app-header {
-    background: linear-gradient(135deg, #dbd810 0%, #134e4a 100%);
-    color: #000000;
+    background: linear-gradient(135deg, #dbd810 0%, #0f766e 55%, #134e4a 100%);
+    color: #ffffff;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
     padding: 2rem 1rem;
     margin-bottom: 2rem;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
-}   
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Decoration: soft blobs in banner */
+.app-header::before,
+.app-header::after {
+    content: "";
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.12);
+    pointer-events: none;
+}
+
+.app-header::before {
+    width: 220px;
+    height: 220px;
+    top: -90px;
+    left: -60px;
+}
+
+.app-header::after {
+    width: 160px;
+    height: 160px;
+    bottom: -70px;
+    right: 8%;
+    background: rgba(219, 216, 16, 0.18);
+}
+
+.app-header .container {
+    position: relative;
+    z-index: 1;
+}
+
+/* Decoration: accent bar beside card headings */
+.card-body > h3 {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.card-body > h3::before {
+    content: "";
+    width: 4px;
+    height: 1.1em;
+    border-radius: 4px;
+    background: linear-gradient(180deg, #dbd810, var(--brand-primary));
+}
 
 /* Cards */
+.card {
+    background-color: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-top: 3px solid var(--brand-primary);
+    border-radius: 0.75rem;
+    box-shadow: 0 2px 5px rgba(15, 23, 42, 0.06);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
 .card:hover {
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px -2px rgba(15, 23, 42, 0.1), 0 3px 6px -3px rgba(15, 23, 42, 0.05);
+}
+
+.card-body {
+    padding: 1.5rem;
 }
 
 /* Custom Badge (กรอปหัวข้อ)*/
@@ -40,6 +108,17 @@ body {
     letter-spacing: 0.05em;
     padding: 0.35rem 0.65rem;
     border-radius: 9999px;
+}
+
+.badge-custom::before {
+    content: "";
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    margin-right: 0.4rem;
+    border-radius: 50%;
+    background: var(--brand-primary);
+    vertical-align: middle;
 }
 
 /* Form Controls */
@@ -58,21 +137,22 @@ body {
 /* Buttons */
 .btn-brand,
 .btn-success {
-    background-color: var(--brand-primary) !important;
+    background: linear-gradient(135deg, #14a394 0%, var(--brand-primary) 50%, #134e4a 100%) !important;
     border-color: var(--brand-primary) !important;
     color: #ffffff !important;
     font-weight: 600;
     border-radius: 0.5rem;
     padding: 0.55rem 1rem;
-    transition: background-color 0.15s ease, border-color 0.15s ease;
+    transition: box-shadow 0.2s ease, filter 0.2s ease, border-color 0.15s ease;
 }
 
 .btn-brand:hover,
 .btn-brand:focus,
 .btn-success:hover,
 .btn-success:focus {
-    background-color: var(--brand-primary-hover) !important;
     border-color: var(--brand-primary-hover) !important;
+    filter: brightness(1.05);
+    box-shadow: 0 4px 14px rgba(15, 118, 110, 0.35);
 }
 
 .btn-outline-secondary {
@@ -107,8 +187,16 @@ body {
 
 /* Preview item */
 .preview-item {
-    margin-bottom: 0.85rem;
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.65rem;
+    border-bottom: 1px dashed var(--card-border);
     line-height: 1.45;
+}
+
+.preview-item:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
 }
 
 .preview-item strong {
