@@ -19,6 +19,55 @@
 
     <main class="container mb-5">
 
+        <!-- Challenge Booth -->
+        <section class="challenge-booth mb-5" id="challenge-booth">
+            <h2 class="h3 fw-bold mb-4 text-black">Challenge Booth</h2>
+            <div class="card challenge-card">
+                <div class="card-body">
+                    <div class="d-flex flex-wrap gap-2 mb-3">
+                        <span class="badge-custom" id="challenge-id">ID</span>
+                        <span class="badge-custom badge-group" id="challenge-creator-group">Group</span>
+                        <span class="badge-custom badge-category" id="challenge-category">Category</span>
+                    </div>
+
+                    <h3 class="h4 fw-bold mb-2" id="challenge-title">Challenge title</h3>
+                    <p class="text-secondary mb-4" id="challenge-description">Challenge description</p>
+
+                    <div class="row g-4">
+                        <div class="col-md-7">
+                            <div class="preview-item">
+                                <strong>Instructions:</strong>
+                                <ol class="challenge-steps mb-0" id="challenge-instructions"></ol>
+                            </div>
+                        </div>
+                        <div class="col-md-5">
+                            <div class="preview-item">
+                                <strong>Estimated time:</strong>
+                                <span><span id="challenge-estimated-minutes">0</span> minutes</span>
+                            </div>
+                            <div class="preview-item">
+                                <strong>Evidence prompt:</strong>
+                                <span id="challenge-evidence-prompt">none</span>
+                            </div>
+                            <div class="preview-item">
+                                <strong>Tags:</strong>
+                                <div class="d-flex flex-wrap gap-2 mt-1" id="challenge-tags"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="challenge-actions mt-4 pt-3">
+                        <label class="form-label" for="challenge-file-input">Choose Challenge file (.json)</label>
+                        <div class="d-flex flex-wrap gap-2">
+                            <input class="form-control flex-grow-1 w-auto" type="file" id="challenge-file-input" accept=".json,application/json">
+                            <button class="btn btn-success" type="button" id="challenge-export-btn">Export Challenge (.json)</button>
+                        </div>
+                        <p class="challenge-message small mt-2 mb-0" id="challenge-message" role="status"></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <!--คลุมอัน 1-->
         <h2 class="h3 fw-bold mb-4 text-black">Portfolio 1</h2>
         
