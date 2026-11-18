@@ -211,3 +211,113 @@ if (savedData2 !== null) {
         console.error('Could not restore Portfolio 2:', error);
     }
 }
+
+// ชาเลนจ์ของกลุ่ม export/import
+
+const sampleChallenge = {
+    schemaVersion: "1.0",
+    id: "G05-C01",
+    creatorGroup: "G05",
+    title: "สร้างการ์ดโปรไฟล์ส่วนตัวด้วย Bootstrap Card",
+    description: "ฝึกใช้ Bootstrap Component เพื่อสร้างการ์ดแนะนำตัวสั้นๆ พร้อมตกแต่งให้สวยงาม",
+    category: "discover",
+    instructions: [
+        "สร้างแท็ก <div class=\"card\"> ในไฟล์ HTML ของตัวเอง",
+        "เพิ่มหัวข้อ h5 และข้อความแนะนำตัวสั้นๆ ด้านใน",
+        "ใส่ปุ่ม Bootstrap สีเขียว (btn btn-success) สำหรับกดดูข้อมูลเพิ่มเติม"
+    ],
+    estimatedMinutes: 5,
+    evidencePrompt: "แปะลิงก์ผลงาน",
+    tags: ["html", "bootstrap", "card"]
+};
+
+function displayChallenge(data) {
+    const setElemText = (id, text) => {
+        const el = document.querySelector(`#${id}`);
+        if (el) el.textContent = text;
+    };
+
+    setElemText('challenge-id', data.id || '-');
+    setElemText('challenge-creator-group', data.creatorGroup || '-');
+    setElemText('challenge-category', data.category || '-');
+    setElemText('challenge-title', data.title || '-');
+    setElemText('challenge-description', data.description || '-');
+    setElemText('challenge-estimated-minutes', data.estimatedMinutes || 0);
+    setElemText('challenge-evidence-prompt', data.evidencePrompt || 'none');
+
+    const instructionsList = document.querySelector("#challenge-instructions");
+    if (instructionsList) {
+        instructionsList.innerHTML = "";
+        if (Array.isArray(data.instructions)) {
+            data.instructions.forEach(step => {
+                const li = document.createElement("li");
+                li.textContent = step;
+                instructionsList.appendChild(li);
+            });
+        }
+    }
+
+    const tagsContainer = document.querySelector("#challenge-tags");
+    if (tagsContainer) {
+        tagsContainer.innerHTML = "";
+        if (Array.isArray(data.tags)) {
+            data.tags.forEach(tag => {
+                const badge = document.createElement("span");
+                badge.className = "badge bg-secondary";
+                badge.textContent = tag;
+                tagsContainer.appendChild(badge);
+            });
+        }
+    }
+}
+
+displayChallenge(sampleChallenge);
+
+const exportBtn = document.querySelector("#challenge-export-btn");
+if (exportBtn) {
+    exportBtn.addEventListener("click", () => {
+        const jsonText = JSON.stringify(sampleChallenge, null, 2);
+        const blob = new Blob([jsonText], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = `${sampleChallenge.id}.json`;
+        link.click();
+
+        URL.revokeObjectURL(url);
+
+        const msg = document.querySelector("#challenge-message");
+        if (msg) {
+            msg.textContent = "Exported challenge successfully!";
+            msg.className = "challenge-message small mt-2 mb-0 text-success";
+        }
+    });
+}
+
+const fileInput = document.querySelector("#challenge-file-input");
+if (fileInput) {
+    fileInput.addEventListener("change", (event) => {
+        const file = event.target.files[0];
+        const msg = document.querySelector("#challenge-message");
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            try {
+                const data = JSON.parse(e.target.result);
+                displayChallenge(data);
+                if (msg) {
+                    msg.textContent = `Imported "${data.title || file.name}" successfully!`;
+                    msg.className = "challenge-message small mt-2 mb-0 text-success";
+                }
+            } catch (err) {
+                if (msg) {
+                    msg.textContent = "Error: Invalid JSON file format.";
+                    msg.className = "challenge-message small mt-2 mb-0 text-danger";
+                }
+            }
+        };
+        reader.readAsText(file);
+    });
+}
