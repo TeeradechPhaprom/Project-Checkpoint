@@ -71,6 +71,99 @@
             </div>
         </section>
 
+        <!-- Export Portfolio Item JSON -->
+        <section class="mb-4" id="host-item-section">
+            <div class="card">
+                <div class="card-body">
+                    <span class="badge-custom d-inline-block mb-2">Host · Share Item</span>
+                    <h3 class="h5 fw-bold mb-3">Export Portfolio Item (JSON)</h3>
+                    <div class="d-flex flex-wrap gap-2">
+                        <button class="btn btn-success" type="button" id="host-copy-item-btn">Copy Item JSON</button>
+                        <button class="btn btn-outline-secondary" type="button" id="host-download-item-btn">Download portfolio-item.json</button>
+                    </div>
+                    <p class="small mt-2 mb-0" id="host-item-msg" role="status"></p>
+                </div>
+            </div>
+        </section>
+        
+        <!-- test:อันนี้ Import JSON Edit Reflection และSave to Server --->
+        <section class="mb-4" id="tester-import-section">
+            <div class="card">
+                <div class="card-body">
+                    <span class="badge-custom d-inline-block mb-2">Tester · Import &amp; Save</span>
+                    <h3 class="h5 fw-bold mb-2">Import Portfolio Item</h3>
+
+                    <label class="form-label" for="import-item-file">Upload JSON file (.json)</label>
+                    <input class="form-control mb-2" type="file" id="import-item-file" accept=".json,application/json">
+
+                    <p class="small mb-2" id="import-item-status" role="status"></p>
+
+                    <form id="tester-save-item-form" class="border-top pt-3 mt-2">
+                        <div class="form-section-title">Review Reflection &amp; Save to Server</div>
+
+                        <label class="form-label" for="tester-target-portfolio">Target Portfolio</label>
+                        <select class="form-select mb-2" id="tester-target-portfolio"></select>
+
+                        <div class="row g-2 mb-2">
+                            <div class="col-md-6">
+                                <label class="form-label" for="tester-item-id">Item ID</label>
+                                <input class="form-control form-control-sm" id="tester-item-id" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label" for="tester-item-title">Title</label>
+                                <input class="form-control form-control-sm" id="tester-item-title" required>
+                            </div>
+                        </div>
+
+                        <div class="row g-2 mb-2">
+                            <div class="col-md-4">
+                                <label class="form-label" for="tester-item-type">Type</label>
+                                <input class="form-control form-control-sm" id="tester-item-type" placeholder="Challenge">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label" for="tester-item-date">Date</label>
+                                <input class="form-control form-control-sm" id="tester-item-date" placeholder="2026-11-19">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label" for="tester-item-role">Role</label>
+                                <input class="form-control form-control-sm" id="tester-item-role" placeholder="Tester">
+                            </div>
+                        </div>
+
+                        <label class="form-label" for="tester-item-desc">Description</label>
+                        <input class="form-control form-control-sm mb-2" id="tester-item-desc">
+
+                        <label class="form-label" for="tester-item-skills">Skills (comma-separated)</label>
+                        <input class="form-control form-control-sm mb-2" id="tester-item-skills" placeholder="HTML, Bootstrap">
+
+                        <div class="row g-2 mb-2">
+                            <div class="col-md-6">
+                                <label class="form-label" for="ref-what-i-did">What I Did</label>
+                                <input class="form-control form-control-sm" id="ref-what-i-did" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label" for="ref-what-i-learned">What I Learned</label>
+                                <input class="form-control form-control-sm" id="ref-what-i-learned" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label" for="ref-challenge">Challenge</label>
+                                <input class="form-control form-control-sm" id="ref-challenge" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label" for="ref-next-step">Next Step</label>
+                                <input class="form-control form-control-sm" id="ref-next-step" required>
+                            </div>
+                        </div>
+
+                        <label class="form-label" for="tester-item-evidence">Evidence URL (at least 1)</label>
+                        <input class="form-control form-control-sm mb-3" id="tester-item-evidence" placeholder="https://..." required>
+
+                        <button class="btn btn-success w-100" type="submit" id="tester-save-server-btn">Save Item to Server</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+
         <div class="card challenge-card shadow-sm rounded-4 p-4 mb-4">
             <h2 class="h5 fw-bold">Portfolio people</h2>
             <div id="portfolio-list" class="d-grid gap-2"></div>
@@ -100,6 +193,12 @@
                             <span id="portfolio-curious-1">none</span>
                         </div>
                         <div id="item-list" ></div>
+                        <div class="mt-3 pt-3 border-top">
+                            <button class="btn btn-outline-secondary btn-sm" type="button" id="export-my-portfolio-btn">
+                                Export My Portfolio (my-portfolio.json)
+                            </button>
+                            <p class="small mt-2 mb-0" id="export-my-portfolio-msg" role="status"></p>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -305,3 +305,281 @@ if (fileInput) {
         reader.readAsText(file);
     });
 }
+
+// ==ฝั่ง Host Export Portfolio Item JSON ====
+function buildPortfolioItemFromChallenge(challengeData) {
+    const today = new Date().toISOString().slice(0, 10);
+    const idBase = (challengeData && challengeData.id ? challengeData.id : 'item')
+        .toLowerCase()
+        .replace(/[^a-z0-9-_]/g, '-');
+    return {
+        id: `${idBase}-${today}`,
+        title: challengeData?.title || 'Challenge Submission',
+        type: 'Challenge',
+        date: today,
+        role: 'Participant',
+        description: challengeData?.description || '',
+        skills: Array.isArray(challengeData?.tags) ? challengeData.tags : [],
+        reflection: {
+            whatIDid: '',
+            whatILearned: '',
+            challenge: '',
+            nextStep: ''
+        },
+        evidence: []
+    };
+}
+
+let latestHostItemJson = '';
+
+function syncHostItemJson(challengeData = sampleChallenge) {
+    latestHostItemJson = JSON.stringify(buildPortfolioItemFromChallenge(challengeData), null, 2);
+}
+
+const originalDisplayChallenge = typeof displayChallenge === 'function' ? displayChallenge : null;
+if (originalDisplayChallenge) {
+    displayChallenge = function (data) {
+        originalDisplayChallenge(data);
+        syncHostItemJson(data);
+    };
+}
+syncHostItemJson(sampleChallenge);
+
+function triggerJsonDownload(filename, obj) {
+    const blob = new Blob([JSON.stringify(obj, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    a.click();
+    URL.revokeObjectURL(url);
+}
+
+const hostCopyBtn = document.querySelector('#host-copy-item-btn');
+if (hostCopyBtn) {
+    hostCopyBtn.addEventListener('click', async () => {
+        const msg = document.querySelector('#host-item-msg');
+        try {
+            await navigator.clipboard.writeText(latestHostItemJson);
+            if (msg) {
+                msg.textContent = 'Copied portfolio-item JSON!';
+                msg.className = 'small mt-2 mb-0 text-success';
+            }
+        } catch {
+            if (msg) {
+                msg.textContent = 'Could not copy automatically.';
+                msg.className = 'small mt-2 mb-0 text-danger';
+            }
+        }
+    });
+}
+
+const hostDownloadBtn = document.querySelector('#host-download-item-btn');
+if (hostDownloadBtn) {
+    hostDownloadBtn.addEventListener('click', () => {
+        const msg = document.querySelector('#host-item-msg');
+        try {
+            const parsed = JSON.parse(latestHostItemJson);
+            triggerJsonDownload('portfolio-item.json', parsed);
+            if (msg) {
+                msg.textContent = 'Downloaded portfolio-item.json!';
+                msg.className = 'small mt-2 mb-0 text-success';
+            }
+        } catch (err) {
+            if (msg) {
+                msg.textContent = err.message;
+                msg.className = 'small mt-2 mb-0 text-danger';
+            }
+        }
+    });
+}
+
+// ==== นี Tester Import ===
+function syncTesterPortfolioSelect() {
+    const select = document.querySelector('#tester-target-portfolio');
+    if (!select) return;
+    select.innerHTML = '';
+    for (const p of portfolios) {
+        const opt = document.createElement('option');
+        opt.value = p.id;
+        opt.textContent = `${p.displayName} (${p.items.length} items)`;
+        if (p.id === selectedId) opt.selected = true;
+        select.appendChild(opt);
+    }
+}
+
+const origShowList = showPortfolioList;
+showPortfolioList = function () {
+    origShowList();
+    syncTesterPortfolioSelect();
+};
+
+function setImportStatus(text, isError = false) {
+    const el = document.querySelector('#import-item-status');
+    if (!el) return;
+    el.textContent = text;
+    el.className = isError ? 'small mb-2 text-danger' : 'small mb-2 text-success';
+}
+
+function isDuplicateItemId(targetPortfolioId, itemId) {
+    if (!itemId) return false;
+    const target = portfolios.find(p => p.id === targetPortfolioId);
+    if (!target || !Array.isArray(target.items)) return false;
+    return target.items.some(existing => String(existing.id) === String(itemId));
+}
+
+function populateTesterForm(rawObj) {
+    const ref = (rawObj.reflection && typeof rawObj.reflection === 'object') ? rawObj.reflection : {};
+    const skillsArr = Array.isArray(rawObj.skills) ? rawObj.skills : [];
+    const evArr = Array.isArray(rawObj.evidence) ? rawObj.evidence : (rawObj.evidence ? [rawObj.evidence] : []);
+
+    document.querySelector('#tester-item-id').value = rawObj.id || '';
+    document.querySelector('#tester-item-title').value = rawObj.title || '';
+    document.querySelector('#tester-item-type').value = rawObj.type || 'Challenge';
+    document.querySelector('#tester-item-date').value = rawObj.date || new Date().toISOString().slice(0, 10);
+    document.querySelector('#tester-item-role').value = rawObj.role || 'Tester';
+    document.querySelector('#tester-item-desc').value = rawObj.description || '';
+    document.querySelector('#tester-item-skills').value = skillsArr.join(', ');
+    document.querySelector('#ref-what-i-did').value = ref.whatIDid || '';
+    document.querySelector('#ref-what-i-learned').value = ref.whatILearned || '';
+    document.querySelector('#ref-challenge').value = ref.challenge || '';
+    document.querySelector('#ref-next-step').value = ref.nextStep || '';
+    document.querySelector('#tester-item-evidence').value = evArr[0] || '';
+}
+
+function loadJsonStringIntoTester(jsonStr) {
+    const data = JSON.parse(jsonStr);
+    if (!data || typeof data !== 'object' || Array.isArray(data)) {
+        throw new Error('JSON must be a Portfolio Item object.');
+    }
+    if (!data.title || typeof data.title !== 'string' || !data.title.trim()) {
+        throw new Error('Missing or invalid "title" field in Portfolio Item JSON.');
+    }
+
+    const targetId = document.querySelector('#tester-target-portfolio')?.value || selectedId;
+    if (data.id && isDuplicateItemId(targetId, data.id)) {
+        throw new Error(`Duplicate item ID "${data.id}" in the selected portfolio. Change the ID before saving.`);
+    }
+
+    populateTesterForm(data);
+    setImportStatus('JSON validated. Edit reflection & evidence, then click "Save Item to Server".', false);
+}
+
+const parseImportBtn = document.querySelector('#parse-import-item-btn');
+if (parseImportBtn) {
+    parseImportBtn.addEventListener('click', () => {
+        const rawText = document.querySelector('#import-item-textarea')?.value.trim() || '';
+        if (!rawText) {
+            setImportStatus('Please paste Portfolio Item JSON or upload a .json file first.', true);
+            return;
+        }
+        try {
+            loadJsonStringIntoTester(rawText);
+        } catch (err) {
+            setImportStatus(err.message, true);
+        }
+    });
+}
+
+const importFileInput = document.querySelector('#import-item-file');
+if (importFileInput) {
+    importFileInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+            const text = String(ev.target.result || '');
+            const ta = document.querySelector('#import-item-textarea');
+            if (ta) ta.value = text;
+            try {
+                loadJsonStringIntoTester(text);
+            } catch (err) {
+                setImportStatus(err.message, true);
+            }
+        };
+        reader.readAsText(file);
+    });
+}
+
+const testerSaveForm = document.querySelector('#tester-save-item-form');
+if (testerSaveForm) {
+    testerSaveForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const targetPortfolioId = document.querySelector('#tester-target-portfolio')?.value || selectedId;
+        if (!targetPortfolioId) {
+            setImportStatus('Please create or select a target Portfolio first.', true);
+            return;
+        }
+
+        const itemId = val('#tester-item-id');
+        const title = val('#tester-item-title');
+        const evidenceUrl = val('#tester-item-evidence');
+        const whatIDid = val('#ref-what-i-did');
+        const whatILearned = val('#ref-what-i-learned');
+        const challengeRef = val('#ref-challenge');
+        const nextStep = val('#ref-next-step');
+
+        if (!title) {
+            setImportStatus('Title is required.', true);
+            return;
+        }
+        if (!whatIDid || !whatILearned || !challengeRef || !nextStep) {
+            setImportStatus('Please fill all 4 reflection fields.', true);
+            return;
+        }
+        if (!evidenceUrl) {
+            setImportStatus('Please provide at least one Evidence URL.', true);
+            return;
+        }
+        if (isDuplicateItemId(targetPortfolioId, itemId)) {
+            setImportStatus(`Item ID "${itemId}" already exists in this portfolio.`, true);
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('portfolioId', targetPortfolioId);
+        formData.append('title', title);
+        formData.append('type', val('#tester-item-type') || 'Challenge');
+        formData.append('date', val('#tester-item-date') || new Date().toISOString().slice(0, 10));
+        formData.append('role', val('#tester-item-role') || 'Tester');
+        formData.append('description', val('#tester-item-desc'));
+        formData.append('skills', val('#tester-item-skills'));
+        formData.append('whatIDid', whatIDid);
+        formData.append('whatILearned', whatILearned);
+        formData.append('challenge', challengeRef);
+        formData.append('nextStep', nextStep);
+        formData.append('evidence', evidenceUrl);
+
+        try {
+            await postForm('api/items.php', formData);
+            await loadPortfolios();
+            selectedId = targetPortfolioId;
+            showPortfolioList();
+            showPortfolio1();
+            setImportStatus(`Saved "${title}" to server successfully.`, false);
+            testerSaveForm.reset();
+        } catch (err) {
+            setImportStatus(err.message, true);
+        }
+    });
+}
+
+const exportMyPortfolioBtn = document.querySelector('#export-my-portfolio-btn');
+if (exportMyPortfolioBtn) {
+    exportMyPortfolioBtn.addEventListener('click', () => {
+        const msg = document.querySelector('#export-my-portfolio-msg');
+        const current = portfolios.find(p => p.id === selectedId);
+        if (!current) {
+            if (msg) {
+                msg.textContent = 'Please select your Portfolio first.';
+                msg.className = 'small mt-2 mb-0 text-danger';
+            }
+            return;
+        }
+        triggerJsonDownload('my-portfolio.json', current);
+        if (msg) {
+            msg.textContent = `Exported "${current.displayName}" to my-portfolio.json!`;
+            msg.className = 'small mt-2 mb-0 text-success';
+        }
+    });
+} 
