@@ -64,7 +64,7 @@ function showPortfolio1() {
         card.className = 'item-card rounded-3 p-3';
         const title = document.createElement('h3');
         title.className = 'h6 fw-bold mb-1';
-        title.textContent = item.title + ' · ' + item.type;
+        title.textContent = item.title + ' · ' + item.type + ' · ' + item.date;
         const text = document.createElement('p');
         text.className = 'small mb-1';
         text.textContent = item.description + ' --- Skills: ' + item.skills.join(', ');
@@ -123,34 +123,21 @@ document.querySelector('#profile-form-item-1').addEventListener('submit', async 
     event.preventDefault();
     const error = document.querySelector('#item-error-1');
     const showError = msg => error ? (error.textContent = msg) : alert(msg);
-    if (error) error.textContent = '';
-
-    if (selectedId === null) {
+    if (!selectedId) {
         showError('Please create or select a Portfolio first.');
         return;
     }
-
-    const sets = [
-        ['#Title-1',  '#Role-1',  '#Skill-1',  '#Reflection-1',  '#Evidence-1'],
-    ];
-    const today = new Date().toISOString().slice(0, 10);
-
     try {
-        for (const [t, r, s, d, e] of sets) {
-            const title = val(t);
-            if (title === '') continue;
-            const formData = new FormData();
-            formData.append('portfolioId', selectedId);
-            formData.append('title', title);
-            formData.append('type', val(r));
-            formData.append('description', val(d));
-            formData.append('skills', val(s));
-            formData.append('evidence', val(e));
-            await postForm('api/items.php', formData);
+        const formData = new FormData(event.target);
+        formData.append('portfolioId', selectedId); 
+        await postForm('api/items.php', formData);
+        if (error) {
+            error.textContent = '';
         }
+        event.target.reset();
         await loadPortfolios();
-    } catch (err) {
-        showError(err.message);
+    } catch (e) {
+        showError(e.message);
     }
 });
 
@@ -195,7 +182,6 @@ if (formItem2) {
 }
 
 // ชาเลนจ์ของกลุ่ม export/import
-
 const sampleChallenge = {
     schemaVersion: "1.0",
     id: "G05-C01",
