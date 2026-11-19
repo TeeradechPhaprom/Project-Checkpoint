@@ -69,13 +69,21 @@ function showPortfolio1() {
         text.className = 'small mb-1';
         text.textContent = item.description + ' --- Skills: ' + item.skills.join(', ');
         card.append(title, text);
-        for (const url of item.evidence) {
-            const link = document.createElement('a');
-            link.href = url;
-            link.textContent = url;
-            link.target = '_blank';
-            link.className = 'small d-block';
-            card.appendChild(link);
+        for (const url of item.evidence || []) {
+            // ทำเป็นลิงก์เฉพาะที่ขึ้นต้นด้วย http เพราะ JSON อาจมาจากคนอื่น
+            if (url.startsWith('http://') || url.startsWith('https://')) {
+                const link = document.createElement('a');
+                link.href = url;
+                link.textContent = url;
+                link.target = '_blank';
+                link.className = 'small d-block';
+                card.appendChild(link);
+            } else {
+                const note = document.createElement('span');
+                note.className = 'small d-block';
+                note.textContent = url;
+                card.appendChild(note);
+            }
         }
         list.appendChild(card);
     }
@@ -344,12 +352,29 @@ function triggerJsonDownload(filename, obj) {
     URL.revokeObjectURL(url);
 }
 
+// ถ้าเปิดเว็บผ่าน http (เช่น EC2) navigator.clipboard จะใช้ไม่ได้ เลยใช้วิธีเก่าแทน
+async function copyText(text) {
+    if (navigator.clipboard) {
+        await navigator.clipboard.writeText(text);
+    } else {
+        const box = document.createElement('textarea');
+        box.value = text;
+        document.body.appendChild(box);
+        box.select();
+        const ok = document.execCommand('copy');
+        document.body.removeChild(box);
+        if (!ok) {
+            throw new Error('copy failed');
+        }
+    }
+}
+
 const hostCopyBtn = document.querySelector('#host-copy-item-btn');
 if (hostCopyBtn) {
     hostCopyBtn.addEventListener('click', async () => {
         const msg = document.querySelector('#host-item-msg');
         try {
-            await navigator.clipboard.writeText(latestHostItemJson);
+            await copyText(latestHostItemJson);
             if (msg) {
                 msg.textContent = 'Copied portfolio-item JSON!';
                 msg.className = 'small mt-2 mb-0 text-success';
@@ -431,9 +456,30 @@ function isDuplicateItemId(targetPortfolioId, itemId) {
 }
 
 function populateImportReview(rawObj) {
-    const ref = (rawObj.reflection && typeof rawObj.reflection === 'object') ? rawObj.reflection : {};
-    const skillsArr = Array.isArray(rawObj.skills) ? rawObj.skills : [];
-    const evArr = Array.isArray(rawObj.evidence) ? rawObj.evidence : (rawObj.evidence ? [rawObj.evidence] : []);
+    // JSON ของกลุ่มอื่นอาจเขียนไม่เหมือนกัน เช่น skills เป็นข้อความเดียว เลยแปลงให้เป็นแบบเดียวกันก่อน
+    let ref = rawObj.reflection;
+    if (typeof ref === 'string') {
+        ref = { whatIDid: ref };
+    }
+    if (!ref || typeof ref !== 'object') {
+        ref = {};
+    }
+
+    let skillsArr = rawObj.skills;
+    if (typeof skillsArr === 'string') {
+        skillsArr = skillsArr.split(',');
+    }
+    if (!Array.isArray(skillsArr)) {
+        skillsArr = [];
+    }
+
+    let evArr = rawObj.evidence;
+    if (typeof evArr === 'string') {
+        evArr = [evArr];
+    }
+    if (!Array.isArray(evArr)) {
+        evArr = [];
+    }
 
     importedItemData = {
         ...rawObj,
@@ -481,6 +527,7 @@ function populateImportReview(rawObj) {
     document.querySelector('#import-what-i-learned').value = ref.whatILearned || '';
     document.querySelector('#import-challenge').value = ref.challenge || '';
     document.querySelector('#import-next-step').value = ref.nextStep || '';
+    document.querySelector('#import-evidence-input').value = '';
 
     syncImportPortfolioSelect();
     setImportSaveMessage('');
@@ -562,13 +609,28 @@ if (importSaveBtn) {
         formData.append('whatILearned', whatILearned);
         formData.append('challenge', challengeRef);
         formData.append('nextStep', nextStep);
-        formData.append('evidence', (importedItemData.evidence || []).join(', '));
+        // evidence = ที่มากับ JSON + ที่ผู้เล่นพิมพ์เพิ่ม (1 บรรทัดต่อ 1 รายการ)
+        const evidenceList = [];
+        for (const e of importedItemData.evidence) {
+            evidenceList.push(e);
+        }
+        const lines = document.querySelector('#import-evidence-input').value.split('\n');
+        for (const line of lines) {
+            if (line.trim() !== '') {
+                evidenceList.push(line.trim());
+            }
+        }
+        for (const e of evidenceList) {
+            formData.append('evidence[]', e);
+        }
 
         try {
             await postForm('api/items.php', formData);
             selectedId = targetPortfolioId;
+            const savedTitle = importedItemData.title;
+            importedItemData = null; // กันกด Save ซ้ำโดยไม่ได้ตั้งใจ
             await loadPortfolios();
-            setImportSaveMessage(`Saved "${importedItemData.title}" to server successfully.`, false);
+            setImportSaveMessage(`Saved "${savedTitle}" to server successfully.`, false);
         } catch (err) {
             setImportSaveMessage(err.message, true);
         }
