@@ -70,6 +70,7 @@ function showPortfolio1() {
         text.textContent = item.description + ' --- Skills: ' + item.skills.join(', ');
         card.append(title, text);
         for (const url of item.evidence || []) {
+            
             // ทำเป็นลิงก์เฉพาะที่ขึ้นต้นด้วย http เพราะ JSON อาจมาจากคนอื่น
             if (url.startsWith('http://') || url.startsWith('https://')) {
                 const link = document.createElement('a');
@@ -536,21 +537,84 @@ function populateImportReview(rawObj) {
     if (reviewBox) reviewBox.hidden = false;
 }
 
+async function importPortfolioWhole(rawObj) {
+    const displayName = String(rawObj.displayName || '').trim();
+    const profileForm = new FormData();
+    profileForm.append('displayName', displayName);
+    profileForm.append('whatIEnjoy', String(rawObj.whatIEnjoy || '').trim());
+    profileForm.append('whatIveTried', String(rawObj.whatIveTried || '').trim());
+    profileForm.append('whatImCuriousAbout', String(rawObj.whatImCuriousAbout || '').trim());
+
+    const created = await postForm('api/portfolios.php', profileForm);
+    const newPortfolioId = created && created.id ? created.id : null;
+    if (!newPortfolioId) {
+        throw new Error('Could not get created portfolio ID from server.');
+    }
+
+    const itemsArr = Array.isArray(rawObj.items) ? rawObj.items : [];
+    for (const item of itemsArr) {
+        if (!item || typeof item !== 'object') continue;
+        const title = String(item.title || '').trim();
+        if (!title) continue;
+
+        const ref = (item.reflection && typeof item.reflection === 'object') ? item.reflection : {};
+        const skillsVal = Array.isArray(item.skills)
+            ? item.skills.join(', ')
+            : String(item.skills || '');
+
+        const itemForm = new FormData();
+        itemForm.append('portfolioId', newPortfolioId);
+        if (item.id) itemForm.append('id', String(item.id));
+        itemForm.append('title', title);
+        itemForm.append('type', String(item.type || 'Challenge'));
+        itemForm.append('date', String(item.date || new Date().toISOString().slice(0, 10)));
+        itemForm.append('role', String(item.role || 'Tester'));
+        itemForm.append('description', String(item.description || ''));
+        itemForm.append('skills', skillsVal);
+        itemForm.append('whatIDid', String(ref.whatIDid || 'Imported portfolio item'));
+        itemForm.append('whatILearned', String(ref.whatILearned || 'Imported portfolio item'));
+        itemForm.append('challenge', String(ref.challenge || 'None'));
+        itemForm.append('nextStep', String(ref.nextStep || 'Review item'));
+
+        const evList = Array.isArray(item.evidence)
+            ? item.evidence
+            : (item.evidence ? [String(item.evidence)] : []);
+        for (const ev of evList) {
+            if (String(ev).trim() !== '') {
+                itemForm.append('evidence[]', String(ev).trim());
+            }
+        }
+
+        await postForm('api/items.php', itemForm);
+    }
+
+    selectedId = newPortfolioId;
+    await loadPortfolios();
+    return displayName;
+}
+
 const importBtn = document.querySelector('#import-btn');
 if (importBtn) {
-    importBtn.addEventListener('click', () => {
+    importBtn.addEventListener('click', async () => {
         const rawText = document.querySelector('#import-json-input')?.value.trim() || '';
         if (!rawText) {
-            setImportMessage('Please paste Portfolio Item JSON first.', true);
+            setImportMessage('Please paste JSON first.', true);
             return;
         }
         try {
             const data = JSON.parse(rawText);
             if (!data || typeof data !== 'object' || Array.isArray(data)) {
-                throw new Error('JSON must be a Portfolio Item object.');
+                throw new Error('JSON must be an object.');
             }
+
+            if (typeof data.displayName === 'string' && data.displayName.trim() !== '') {
+                const name = await importPortfolioWhole(data);
+                setImportMessage(`Added "${name}" to Portfolio people!`, false);
+                return;
+            }
+
             if (!data.title || typeof data.title !== 'string' || !data.title.trim()) {
-                throw new Error('Missing or invalid "title" field in Portfolio Item JSON.');
+                throw new Error('Missing or invalid "title" or "displayName" in JSON.');
             }
 
             const targetId = document.querySelector('#import-target-portfolio')?.value || selectedId;
