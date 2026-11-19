@@ -296,3 +296,109 @@ body {
 .challenge-message.is-error {
     color: #dc2626;
 }
+
+/* ===== Import Portfolio Item ===== */
+.import-card {
+    border-top: 4px solid var(--brand-primary);
+}
+
+.step-dot {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.4rem;
+    height: 1.4rem;
+    margin-right: 0.35rem;
+    border-radius: 50%;
+    background: var(--brand-primary);
+    color: #ffffff;
+    font-size: 0.75rem;
+}
+
+.import-textarea {
+    font-family: ui-monospace, SFMono-Regular, Consolas, "Courier New", monospace;
+    font-size: 0.85rem;
+    background: #f8fafc;
+}
+
+.import-preview {
+    background: var(--brand-light);
+    border: 1px solid var(--brand-border);
+    border-radius: 0.6rem;
+    padding: 1rem;
+}
+
+#import-skills > * {
+    background: #ffffff;
+    color: var(--brand-primary);
+    border: 1px solid var(--brand-border);
+    border-radius: 9999px;
+    padding: 0.15rem 0.6rem;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.import-evidence {
+    padding-left: 1.1rem;
+    word-break: break-all;
+}
+
+.import-evidence a {
+    color: var(--brand-primary);
+}
+
+.form-select:focus {
+    border-color: var(--brand-primary);
+    box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.15);
+}
+
+/* ===== Host panel ===== */
+.host-card {
+    border-top: 4px solid #dbd810;
+}
+
+/* ===== Portfolio people list ===== */
+.portfolio-btn {
+    background: #f8fafc;
+    border: 1px solid var(--card-border);
+    border-radius: 0.5rem;
+    font-weight: 500;
+    transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.portfolio-btn:hover {
+    background: var(--brand-light);
+    border-color: var(--brand-border);
+}
+
+.portfolio-btn.active,
+.portfolio-btn.active:hover {
+    background: var(--brand-light);
+    border-color: var(--brand-primary);
+    border-left: 4px solid var(--brand-primary);
+    color: var(--brand-primary);
+    font-weight: 600;
+}
+
+#export-portfolio-btn:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+/* ===== Saved item cards ===== */
+#item-list {
+    display: grid;
+    gap: 0.75rem;
+    margin-top: 1rem;
+}
+
+.item-card {
+    background: var(--brand-light);
+    border: 1px solid var(--brand-border);
+    border-left: 4px solid var(--brand-primary);
+}
+
+.item-card a {
+    color: var(--brand-primary);
+    word-break: break-all;
+}
