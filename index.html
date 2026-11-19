@@ -85,81 +85,71 @@
                 </div>
             </div>
         </section>
-        
-        <!-- test:อันนี้ Import JSON Edit Reflection และSave to Server --->
-        <section class="mb-4" id="tester-import-section">
-            <div class="card">
+
+        <!-- Import Portfolio Item -->
+        <section class="mb-5" id="import-section">
+            <h2 class="h3 fw-bold mb-4 text-black">Import Portfolio Item</h2>
+            <div class="card import-card">
                 <div class="card-body">
-                    <span class="badge-custom d-inline-block mb-2">Tester · Import &amp; Save</span>
-                    <h3 class="h5 fw-bold mb-2">Import Portfolio Item</h3>
-
-                    <label class="form-label" for="import-item-file">Upload JSON file (.json)</label>
-                    <input class="form-control mb-2" type="file" id="import-item-file" accept=".json,application/json">
-
-                    <p class="small mb-2" id="import-item-status" role="status"></p>
-
-                    <form id="tester-save-item-form" class="border-top pt-3 mt-2">
-                        <div class="form-section-title">Review Reflection &amp; Save to Server</div>
-
-                        <label class="form-label" for="tester-target-portfolio">Target Portfolio</label>
-                        <select class="form-select mb-2" id="tester-target-portfolio"></select>
-
-                        <div class="row g-2 mb-2">
-                            <div class="col-md-6">
-                                <label class="form-label" for="tester-item-id">Item ID</label>
-                                <input class="form-control form-control-sm" id="tester-item-id" required>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label" for="tester-item-title">Title</label>
-                                <input class="form-control form-control-sm" id="tester-item-title" required>
-                            </div>
+                    <div class="row g-4">
+                        <!-- : paste JSON -->
+                        <div class="col-lg-5">
+                            <div class="form-section-title"><span class="step-dot">1</span> Paste JSON</div>
+                            <label class="form-label" for="import-json-input">Portfolio Item JSON from the booth</label>
+                            <textarea class="form-control import-textarea mb-3" id="import-json-input" rows="10"
+                                spellcheck="false" placeholder='{ "id": "...", "title": "...", ... }'></textarea>
+                            <button class="btn btn-success w-100" type="button" id="import-btn">Import</button>
+                            <p class="challenge-message small mt-2 mb-0" id="import-message" role="status"></p>
                         </div>
 
-                        <div class="row g-2 mb-2">
-                            <div class="col-md-4">
-                                <label class="form-label" for="tester-item-type">Type</label>
-                                <input class="form-control form-control-sm" id="tester-item-type" placeholder="Challenge">
+                        <!-- : review, edit reflection, save (hidden until import)-->
+                        <div class="col-lg-7" id="import-review" hidden>
+                            <div class="form-section-title"><span class="step-dot">2</span> Review &amp; Save</div>
+
+                            <div class="import-preview mb-3">
+                                <h3 class="h5 fw-bold mb-1" id="import-title">Item title</h3>
+                                <p class="small text-secondary mb-2">
+                                    <span id="import-type">Type</span> &middot; <span id="import-date">YYYY-MM-DD</span>
+                                </p>
+                                <div class="preview-item">
+                                    <strong>Role:</strong>
+                                    <span id="import-role">none</span>
+                                </div>
+                                <div class="preview-item">
+                                    <strong>Description:</strong>
+                                    <span id="import-description">none</span>
+                                </div>
+                                <div class="preview-item">
+                                    <strong>Skills:</strong>
+                                    <div class="d-flex flex-wrap gap-2 mt-1" id="import-skills"></div>
+                                </div>
+                                <div class="preview-item">
+                                    <strong>Evidence:</strong>
+                                    <ul class="import-evidence mb-0" id="import-evidence"></ul>
+                                </div>
                             </div>
-                            <div class="col-md-4">
-                                <label class="form-label" for="tester-item-date">Date</label>
-                                <input class="form-control form-control-sm" id="tester-item-date" placeholder="2026-11-19">
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label" for="tester-item-role">Role</label>
-                                <input class="form-control form-control-sm" id="tester-item-role" placeholder="Tester">
-                            </div>
+
+                            <label class="form-label" for="import-what-i-did">What I did</label>
+                            <textarea class="form-control mb-3" id="import-what-i-did" rows="2"></textarea>
+
+                            <label class="form-label" for="import-what-i-learned">What I learned</label>
+                            <textarea class="form-control mb-3" id="import-what-i-learned" rows="2"></textarea>
+
+                            <label class="form-label" for="import-challenge">Challenge</label>
+                            <textarea class="form-control mb-3" id="import-challenge" rows="2"></textarea>
+
+                            <label class="form-label" for="import-next-step">Next step</label>
+                            <textarea class="form-control mb-3" id="import-next-step" rows="2"></textarea>
+
+                            <label class="form-label" for="import-target-portfolio">Save to portfolio</label>
+                            <select class="form-select mb-3" id="import-target-portfolio">
+                                <option value="">-- Choose portfolio --</option>
+                            </select>
+
+                            <button class="btn btn-success w-100" type="button" id="import-save-btn">Save to Server</button>
+                            <p class="challenge-message small mt-2 mb-0" id="import-save-message" role="status"></p>
                         </div>
-
-                        <label class="form-label" for="tester-item-desc">Description</label>
-                        <input class="form-control form-control-sm mb-2" id="tester-item-desc">
-
-                        <label class="form-label" for="tester-item-skills">Skills (comma-separated)</label>
-                        <input class="form-control form-control-sm mb-2" id="tester-item-skills" placeholder="HTML, Bootstrap">
-
-                        <div class="row g-2 mb-2">
-                            <div class="col-md-6">
-                                <label class="form-label" for="ref-what-i-did">What I Did</label>
-                                <input class="form-control form-control-sm" id="ref-what-i-did" required>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label" for="ref-what-i-learned">What I Learned</label>
-                                <input class="form-control form-control-sm" id="ref-what-i-learned" required>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label" for="ref-challenge">Challenge</label>
-                                <input class="form-control form-control-sm" id="ref-challenge" required>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label" for="ref-next-step">Next Step</label>
-                                <input class="form-control form-control-sm" id="ref-next-step" required>
-                            </div>
-                        </div>
-
-                        <label class="form-label" for="tester-item-evidence">Evidence URL (at least 1)</label>
-                        <input class="form-control form-control-sm mb-3" id="tester-item-evidence" placeholder="https://..." required>
-
-                        <button class="btn btn-success w-100" type="submit" id="tester-save-server-btn">Save Item to Server</button>
-                    </form>
+                    </div>
                 </div>
             </div>
         </section>
@@ -230,7 +220,8 @@
                 </div>
             </div>
         </div>
-        
+
+        <div class="row g-4 mb-4">
             <div class="col-lg-6 col-md-12">
                 <div class="card h-100">
                     <div class="card-body">
