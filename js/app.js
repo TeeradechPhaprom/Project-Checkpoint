@@ -70,7 +70,7 @@ function showPortfolio1() {
         text.textContent = item.description + ' --- Skills: ' + item.skills.join(', ');
         card.append(title, text);
         for (const url of item.evidence || []) {
-            
+
             // ทำเป็นลิงก์เฉพาะที่ขึ้นต้นด้วย http เพราะ JSON อาจมาจากคนอื่น
             if (url.startsWith('http://') || url.startsWith('https://')) {
                 const link = document.createElement('a');
@@ -129,7 +129,7 @@ document.querySelector('#profile-form-item-1').addEventListener('submit', async 
     }
     try {
         const formData = new FormData(event.target);
-        formData.append('portfolioId', selectedId); 
+        formData.append('portfolioId', selectedId);
         await postForm('api/items.php', formData);
         if (error) {
             error.textContent = '';
@@ -395,39 +395,8 @@ if (hostDownloadBtn) {
     });
 }
 
-let importedItemData = null;
-
-function syncImportPortfolioSelect() {
-    const select = document.querySelector('#import-target-portfolio');
-    if (!select) return;
-    const currentValue = select.value;
-    select.innerHTML = '<option value="">-- Choose portfolio --</option>';
-    for (const p of portfolios) {
-        const opt = document.createElement('option');
-        opt.value = p.id;
-        opt.textContent = `${p.displayName} (${p.items.length} items)`;
-        if (p.id === selectedId || p.id === currentValue) opt.selected = true;
-        select.appendChild(opt);
-    }
-}
-
-const origShowList = showPortfolioList;
-showPortfolioList = function () {
-    origShowList();
-    syncImportPortfolioSelect();
-};
-
 function setImportMessage(text, isError = false) {
     const el = document.querySelector('#import-message');
-    if (!el) return;
-    el.textContent = text;
-    el.className = isError
-        ? 'challenge-message small mt-2 mb-0 text-danger'
-        : 'challenge-message small mt-2 mb-0 text-success';
-}
-
-function setImportSaveMessage(text, isError = false) {
-    const el = document.querySelector('#import-save-message');
     if (!el) return;
     el.textContent = text;
     el.className = isError
@@ -442,141 +411,59 @@ function isDuplicateItemId(targetPortfolioId, itemId) {
     return target.items.some(existing => String(existing.id) === String(itemId));
 }
 
-function populateImportReview(rawObj) {
-    // JSON ของกลุ่มอื่นอาจเขียนไม่เหมือนกัน เช่น skills เป็นข้อความเดียว เลยแปลงให้เป็นแบบเดียวกันก่อน
-    let ref = rawObj.reflection;
-    if (typeof ref === 'string') {
-        ref = { whatIDid: ref };
-    }
-    if (!ref || typeof ref !== 'object') {
-        ref = {};
-    }
-
-    let skillsArr = rawObj.skills;
-    if (typeof skillsArr === 'string') {
-        skillsArr = skillsArr.split(',');
-    }
-    if (!Array.isArray(skillsArr)) {
-        skillsArr = [];
-    }
-
-    let evArr = rawObj.evidence;
-    if (typeof evArr === 'string') {
-        evArr = [evArr];
-    }
-    if (!Array.isArray(evArr)) {
-        evArr = [];
-    }
-
-    importedItemData = {
-        ...rawObj,
-        type: rawObj.type || 'Challenge',
-        date: rawObj.date || new Date().toISOString().slice(0, 10),
-        role: rawObj.role || 'Tester',
-        description: rawObj.description || '',
-        skills: skillsArr,
-        evidence: evArr
-    };
-
-    const setText = (sel, value, fallback = 'none') => {
-        const el = document.querySelector(sel);
-        if (el) el.textContent = value || fallback;
-    };
-
-    setText('#import-title', importedItemData.title, 'Item title');
-    setText('#import-type', importedItemData.type, 'Type');
-    setText('#import-date', importedItemData.date, 'YYYY-MM-DD');
-    setText('#import-role', importedItemData.role);
-    setText('#import-description', importedItemData.description);
-
-    const skillsEl = document.querySelector('#import-skills');
-    if (skillsEl) {
-        skillsEl.innerHTML = '';
-        for (const sk of skillsArr) {
-            const badge = document.createElement('span');
-            badge.className = 'badge bg-secondary';
-            badge.textContent = sk;
-            skillsEl.appendChild(badge);
-        }
-    }
-
-    const evEl = document.querySelector('#import-evidence');
-    if (evEl) {
-        evEl.innerHTML = '';
-        for (const url of evArr) {
-            const li = document.createElement('li');
-            li.textContent = url;
-            evEl.appendChild(li);
-        }
-    }
-
-    document.querySelector('#import-what-i-did').value = ref.whatIDid || '';
-    document.querySelector('#import-what-i-learned').value = ref.whatILearned || '';
-    document.querySelector('#import-challenge').value = ref.challenge || '';
-    document.querySelector('#import-next-step').value = ref.nextStep || '';
-    document.querySelector('#import-evidence-input').value = '';
-
-    syncImportPortfolioSelect();
-    setImportSaveMessage('');
-
-    const reviewBox = document.querySelector('#import-review');
-    if (reviewBox) reviewBox.hidden = false;
-}
-
-async function importPortfolioWhole(rawObj) {
-    const displayName = String(rawObj.displayName || '').trim();
+async function importPortfolioItem(rawObj) {
+    // const displayName = String(rawObj.displayName || '').trim();
     const profileForm = new FormData();
-    profileForm.append('displayName', displayName);
-    profileForm.append('whatIEnjoy', String(rawObj.whatIEnjoy || '').trim());
-    profileForm.append('whatIveTried', String(rawObj.whatIveTried || '').trim());
-    profileForm.append('whatImCuriousAbout', String(rawObj.whatImCuriousAbout || '').trim());
+    // profileForm.append('displayName', displayName);
+    // profileForm.append('whatIEnjoy', String(rawObj.whatIEnjoy || '').trim());
+    // profileForm.append('whatIveTried', String(rawObj.whatIveTried || '').trim());
+    // profileForm.append('whatImCuriousAbout', String(rawObj.whatImCuriousAbout || '').trim());
 
-    const created = await postForm('api/portfolios.php', profileForm);
-    const newPortfolioId = created && created.id ? created.id : null;
-    if (!newPortfolioId) {
-        throw new Error('Could not get created portfolio ID from server.');
-    }
+    // const created = await postForm('api/portfolios.php', profileForm);
+    // const newPortfolioId = profileForm && profileForm.id ? profileForm.id : null;
+    // if (!newPortfolioId) {
+    //     throw new Error('Could not get created portfolio ID from server.');
+    // }
 
-    const itemsArr = Array.isArray(rawObj.items) ? rawObj.items : [];
-    for (const item of itemsArr) {
-        if (!item || typeof item !== 'object') continue;
-        const title = String(item.title || '').trim();
-        if (!title) continue;
+    // const itemsArr = Array.isArray(rawObj.items) ? rawObj.items : [];
+    // for (const item of itemsArr) {
+        
+    // }
 
-        const ref = (item.reflection && typeof item.reflection === 'object') ? item.reflection : {};
-        const skillsVal = Array.isArray(item.skills)
-            ? item.skills.join(', ')
-            : String(item.skills || '');
+    // if (!rawObj || typeof rawObj !== 'object') continue;
+    // const title = String(item.title || '').trim();
+    // if (!title) continue;
 
-        const itemForm = new FormData();
-        itemForm.append('portfolioId', newPortfolioId);
-        if (item.id) itemForm.append('id', String(item.id));
-        itemForm.append('title', title);
-        itemForm.append('type', String(item.type || 'Challenge'));
-        itemForm.append('date', String(item.date || new Date().toISOString().slice(0, 10)));
-        itemForm.append('role', String(item.role || 'Tester'));
-        itemForm.append('description', String(item.description || ''));
-        itemForm.append('skills', skillsVal);
-        itemForm.append('whatIDid', String(ref.whatIDid || 'Imported portfolio item'));
-        itemForm.append('whatILearned', String(ref.whatILearned || 'Imported portfolio item'));
-        itemForm.append('challenge', String(ref.challenge || 'None'));
-        itemForm.append('nextStep', String(ref.nextStep || 'Review item'));
+    const ref = (rawObj.reflection && typeof rawObj.reflection === 'object') ? rawObj.reflection : {};
+    const skillsVal = Array.isArray(rawObj.skills) ? rawObj.skills.join(', ') : String(rawObj.skills || '');
 
-        const evList = Array.isArray(item.evidence)
-            ? item.evidence
-            : (item.evidence ? [String(item.evidence)] : []);
-        for (const ev of evList) {
-            if (String(ev).trim() !== '') {
-                itemForm.append('evidence[]', String(ev).trim());
-            }
+    const itemForm = new FormData();
+
+    itemForm.append('portfolioId', selectedId);
+    itemForm.append('id', rawObj.id || '');
+    itemForm.append('title', rawObj.title);
+    itemForm.append('type', String(rawObj.type || 'Challenge'));
+    itemForm.append('date', String(rawObj.date || new Date().toISOString().slice(0, 10)));
+    itemForm.append('role', String(rawObj.role || 'Tester'));
+    itemForm.append('description', String(rawObj.description || ''));
+    itemForm.append('skills', skillsVal);
+    itemForm.append('whatIDid', String(ref.whatIDid || 'Imported portfolio item'));
+    itemForm.append('whatILearned', String(ref.whatILearned || 'Imported portfolio item'));
+    itemForm.append('challenge', String(ref.challenge || 'None'));
+    itemForm.append('nextStep', String(ref.nextStep || 'Review item'));
+
+    const evList = Array.isArray(rawObj.evidence) ? rawObj.evidence : (rawObj.evidence ? [String(rawObj.evidence)] : []);
+    for (const ev of evList) {
+        if (String(ev).trim() !== '') {
+            itemForm.append('evidence[]', String(ev).trim());
         }
-
-        await postForm('api/items.php', itemForm);
     }
 
-    selectedId = newPortfolioId;
+    await postForm('api/items.php', itemForm);
+
+    // selectedId = newPortfolioId;
     await loadPortfolios();
-    return displayName;
+    // return displayName;
 }
 
 const importBtn = document.querySelector('#import-btn');
@@ -589,14 +476,15 @@ if (importBtn) {
         }
         try {
             const data = JSON.parse(rawText);
+
             if (!data || typeof data !== 'object' || Array.isArray(data)) {
                 throw new Error('JSON must be an object.');
             }
 
-            if (typeof data.displayName === 'string' && data.displayName.trim() !== '') {
-                const name = await importPortfolioWhole(data);
-                setImportMessage(`Added "${name}" to Portfolio people!`, false);
-                return;
+            const portfolio = portfolios.find(p => p.id === selectedId);
+
+            if (!portfolio) {
+                throw new Error('Portfolio not found.');
             }
 
             if (!data.title || typeof data.title !== 'string' || !data.title.trim()) {
@@ -608,81 +496,10 @@ if (importBtn) {
                 throw new Error(`Duplicate item ID "${data.id}" in the selected portfolio.`);
             }
 
-            populateImportReview(data);
-            setImportMessage('Imported JSON. Review reflection and click "Save to Server".', false);
+            importPortfolioItem(data)
+            setImportMessage('Imported JSON.', false);
         } catch (err) {
             setImportMessage(err.message, true);
-        }
-    });
-}
-
-const importSaveBtn = document.querySelector('#import-save-btn');
-if (importSaveBtn) {
-    importSaveBtn.addEventListener('click', async () => {
-        if (!importedItemData) {
-            setImportSaveMessage('Please import JSON first.', true);
-            return;
-        }
-
-        const targetPortfolioId = document.querySelector('#import-target-portfolio')?.value || selectedId;
-        if (!targetPortfolioId) {
-            setImportSaveMessage('Please choose a target portfolio.', true);
-            return;
-        }
-
-        const whatIDid = val('#import-what-i-did');
-        const whatILearned = val('#import-what-i-learned');
-        const challengeRef = val('#import-challenge');
-        const nextStep = val('#import-next-step');
-
-        if (!whatIDid || !whatILearned || !challengeRef || !nextStep) {
-            setImportSaveMessage('Please fill all 4 reflection fields.', true);
-            return;
-        }
-
-        const itemId = importedItemData.id || '';
-        if (isDuplicateItemId(targetPortfolioId, itemId)) {
-            setImportSaveMessage(`Item ID "${itemId}" already exists in this portfolio.`, true);
-            return;
-        }
-
-        const formData = new FormData();
-        formData.append('portfolioId', targetPortfolioId);
-        if (itemId) formData.append('id', itemId);
-        formData.append('title', importedItemData.title);
-        formData.append('type', importedItemData.type || 'Challenge');
-        formData.append('date', importedItemData.date || new Date().toISOString().slice(0, 10));
-        formData.append('role', importedItemData.role || 'Tester');
-        formData.append('description', importedItemData.description || '');
-        formData.append('skills', (importedItemData.skills || []).join(', '));
-        formData.append('whatIDid', whatIDid);
-        formData.append('whatILearned', whatILearned);
-        formData.append('challenge', challengeRef);
-        formData.append('nextStep', nextStep);
-        // evidence = ที่มากับ JSON + ที่ผู้เล่นพิมพ์เพิ่ม (1 บรรทัดต่อ 1 รายการ)
-        const evidenceList = [];
-        for (const e of importedItemData.evidence) {
-            evidenceList.push(e);
-        }
-        const lines = document.querySelector('#import-evidence-input').value.split('\n');
-        for (const line of lines) {
-            if (line.trim() !== '') {
-                evidenceList.push(line.trim());
-            }
-        }
-        for (const e of evidenceList) {
-            formData.append('evidence[]', e);
-        }
-
-        try {
-            await postForm('api/items.php', formData);
-            selectedId = targetPortfolioId;
-            const savedTitle = importedItemData.title;
-            importedItemData = null; // กันกด Save ซ้ำโดยไม่ได้ตั้งใจ
-            await loadPortfolios();
-            setImportSaveMessage(`Saved "${savedTitle}" to server successfully.`, false);
-        } catch (err) {
-            setImportSaveMessage(err.message, true);
         }
     });
 }
