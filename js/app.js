@@ -71,7 +71,6 @@ function showPortfolio1() {
         card.append(title, text);
         for (const url of item.evidence || []) {
 
-            // ทำเป็นลิงก์เฉพาะที่ขึ้นต้นด้วย http เพราะ JSON อาจมาจากคนอื่น
             if (url.startsWith('http://') || url.startsWith('https://')) {
                 const link = document.createElement('a');
                 link.href = url;
@@ -196,7 +195,6 @@ if (formItem2) {
     });
 }
 
-// ชาเลนจ์ของกลุ่ม export/import
 const sampleChallenge = {
     schemaVersion: "1.0",
     id: "G05-C01",
@@ -305,7 +303,6 @@ if (fileInput) {
     });
 }
 
-// ==ฝั่ง Host Export Portfolio Item JSON ====
 function buildPortfolioItemFromChallenge(challengeData) {
     const today = new Date().toISOString().slice(0, 10);
     const idBase = (challengeData && challengeData.id ? challengeData.id : 'item')
@@ -354,7 +351,6 @@ function triggerJsonDownload(filename, obj) {
     URL.revokeObjectURL(url);
 }
 
-// ถ้าเปิดเว็บผ่าน http (เช่น EC2) navigator.clipboard จะใช้ไม่ได้ เลยใช้วิธีเก่าแทน
 async function copyText(text) {
     if (navigator.clipboard) {
         await navigator.clipboard.writeText(text);
@@ -456,7 +452,6 @@ function isDuplicateItemId(targetPortfolioId, itemId) {
 }
 
 function populateImportReview(rawObj) {
-    // JSON ของกลุ่มอื่นอาจเขียนไม่เหมือนกัน เช่น skills เป็นข้อความเดียว เลยแปลงให้เป็นแบบเดียวกันก่อน
     let ref = rawObj.reflection;
     if (typeof ref === 'string') {
         ref = { whatIDid: ref };
@@ -535,36 +530,6 @@ function populateImportReview(rawObj) {
     const reviewBox = document.querySelector('#import-review');
     if (reviewBox) reviewBox.hidden = false;
 }
-
-// async function importPortfolioItem(rawObj) {
-//     const ref = (rawObj.reflection && typeof rawObj.reflection === 'object') ? rawObj.reflection : {};
-//     const skillsVal = Array.isArray(rawObj.skills) ? rawObj.skills.join(', ') : String(rawObj.skills || '');
-
-//     const itemForm = new FormData();
-
-//     itemForm.append('portfolioId', selectedId);
-//     itemForm.append('id', String(rawObj.id || '').trim());
-//     itemForm.append('title', String(rawObj.title || '').trim());
-//     itemForm.append('type', String(rawObj.type || 'Challenge'));
-//     itemForm.append('date', String(rawObj.date || new Date().toISOString().slice(0, 10)));
-//     itemForm.append('role', String(rawObj.role || 'Tester'));
-//     itemForm.append('description', String(rawObj.description || ''));
-//     itemForm.append('skills', skillsVal);
-//     itemForm.append('whatIDid', String(ref.whatIDid || 'Imported portfolio item'));
-//     itemForm.append('whatILearned', String(ref.whatILearned || 'Imported portfolio item'));
-//     itemForm.append('challenge', String(ref.challenge || 'None'));
-//     itemForm.append('nextStep', String(ref.nextStep || 'Review item'));
-
-//     const evList = Array.isArray(rawObj.evidence) ? rawObj.evidence : (rawObj.evidence ? [String(rawObj.evidence)] : []);
-//     for (const ev of evList) {
-//         if (String(ev).trim() !== '') {
-//             itemForm.append('evidence[]', String(ev).trim());
-//         }
-//     }
-
-//     // await postForm('api/items.php', itemForm);
-//     await loadPortfolios();
-// }
 
 const importBtn = document.querySelector('#import-btn');
 if (importBtn) {
@@ -646,7 +611,7 @@ if (importSaveBtn) {
         formData.append('whatILearned', whatILearned);
         formData.append('challenge', challengeRef);
         formData.append('nextStep', nextStep);
-        // evidence = ที่มากับ JSON + ที่ผู้เล่นพิมพ์เพิ่ม (1 บรรทัดต่อ 1 รายการ)
+        
         const evidenceList = [];
         for (const e of importedItemData.evidence) {
             evidenceList.push(e);
@@ -665,7 +630,7 @@ if (importSaveBtn) {
             await postForm('api/items.php', formData);
             selectedId = targetPortfolioId;
             const savedTitle = importedItemData.title;
-            importedItemData = null; // กันกด Save ซ้ำโดยไม่ได้ตั้งใจ
+            importedItemData = null;
             await loadPortfolios();
             setImportSaveMessage(`Saved "${savedTitle}" to server successfully.`, false);
            
