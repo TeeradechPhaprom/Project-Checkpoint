@@ -86,6 +86,21 @@ function showPortfolio1() {
                 card.appendChild(note);
             }
         }
+
+        const exportItemBtn = document.createElement('button');
+        exportItemBtn.type = 'button';
+        exportItemBtn.className = 'btn btn-sm btn-outline-secondary mt-2';
+        exportItemBtn.textContent = 'Export JSON';
+        exportItemBtn.addEventListener('click', () => {
+            const rawSlug = String(item.id || item.title || 'item')
+                .toLowerCase()
+                .replace(/[^a-z0-9-_]+/g, '-')
+                .replace(/^-+|-+$/g, '');
+            const safeSlug = rawSlug || 'portfolio-item';
+            triggerJsonDownload(`${safeSlug}.json`, item);
+        });
+        card.appendChild(exportItemBtn);
+
         list.appendChild(card);
     }
 }
@@ -412,36 +427,14 @@ function isDuplicateItemId(targetPortfolioId, itemId) {
 }
 
 async function importPortfolioItem(rawObj) {
-    // const displayName = String(rawObj.displayName || '').trim();
-    const profileForm = new FormData();
-    // profileForm.append('displayName', displayName);
-    // profileForm.append('whatIEnjoy', String(rawObj.whatIEnjoy || '').trim());
-    // profileForm.append('whatIveTried', String(rawObj.whatIveTried || '').trim());
-    // profileForm.append('whatImCuriousAbout', String(rawObj.whatImCuriousAbout || '').trim());
-
-    // const created = await postForm('api/portfolios.php', profileForm);
-    // const newPortfolioId = profileForm && profileForm.id ? profileForm.id : null;
-    // if (!newPortfolioId) {
-    //     throw new Error('Could not get created portfolio ID from server.');
-    // }
-
-    // const itemsArr = Array.isArray(rawObj.items) ? rawObj.items : [];
-    // for (const item of itemsArr) {
-        
-    // }
-
-    // if (!rawObj || typeof rawObj !== 'object') continue;
-    // const title = String(item.title || '').trim();
-    // if (!title) continue;
-
     const ref = (rawObj.reflection && typeof rawObj.reflection === 'object') ? rawObj.reflection : {};
     const skillsVal = Array.isArray(rawObj.skills) ? rawObj.skills.join(', ') : String(rawObj.skills || '');
 
     const itemForm = new FormData();
 
     itemForm.append('portfolioId', selectedId);
-    itemForm.append('id', rawObj.id || '');
-    itemForm.append('title', rawObj.title);
+    itemForm.append('id', String(rawObj.id || '').trim());
+    itemForm.append('title', String(rawObj.title || '').trim());
     itemForm.append('type', String(rawObj.type || 'Challenge'));
     itemForm.append('date', String(rawObj.date || new Date().toISOString().slice(0, 10)));
     itemForm.append('role', String(rawObj.role || 'Tester'));
@@ -460,10 +453,7 @@ async function importPortfolioItem(rawObj) {
     }
 
     await postForm('api/items.php', itemForm);
-
-    // selectedId = newPortfolioId;
     await loadPortfolios();
-    // return displayName;
 }
 
 const importBtn = document.querySelector('#import-btn');
@@ -482,21 +472,20 @@ if (importBtn) {
             }
 
             const portfolio = portfolios.find(p => p.id === selectedId);
-
             if (!portfolio) {
                 throw new Error('Portfolio not found.');
             }
 
             if (!data.title || typeof data.title !== 'string' || !data.title.trim()) {
-                throw new Error('Missing or invalid "title" or "displayName" in JSON.');
+                throw new Error('Missing or invalid "title" in JSON.');
             }
 
-            const targetId = document.querySelector('#import-target-portfolio')?.value || selectedId;
-            if (data.id && isDuplicateItemId(targetId, data.id)) {
-                throw new Error(`Duplicate item ID "${data.id}" in the selected portfolio.`);
+            const itemId = String(data.id || '').trim();
+            if (itemId && isDuplicateItemId(selectedId, itemId)) {
+                throw new Error(`Duplicate item ID "${itemId}" in the selected portfolio.`);
             }
 
-            importPortfolioItem(data)
+            await importPortfolioItem(data);
             setImportMessage('Imported JSON.', false);
         } catch (err) {
             setImportMessage(err.message, true);
